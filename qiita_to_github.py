@@ -1,11 +1,21 @@
-import qiita_api
+"""Qiitaの記事をGitHubのマークダウンのファイルに出力する
+
+以下のことをおこなっています。
+・画像をローカルにダウロードして、リンクを書き換えます。
+・コードブロック以外の行にて、改行コードの前にスペース2ついれて改行を行います。
+・「#タイトル」という記述があったら「# タイトル」に直します。
+・コードブロックのタイトル（例：「```python:test.py」）が表示されないので対応します。
+
+"""
 import sys
 import re
 import urllib
 import os
+import qiita_api
 
 
 def fix_titlemiss(line):
+    """タイトルタグのスペースの入れ忘れを修正します."""
     if not line:
         return line
     if line[0] != '#':
@@ -25,25 +35,29 @@ def fix_titlemiss(line):
 
 
 def has_code_block_mark(line):
+    """指定の行がコードブロックのタグ（```）か検査します."""
     if len(line) < 3:
-       return False
+        return False
     if line[0:3] == '```':
-       return True
+        return True
     return False
 
 
 def fix_newline(line):
+    """改行コードの前にスペースを2つ追加します."""
     if line[-2:] == '  ':
         return line
     return line + '  '
 
 
 def download(url, local_path):
+    """ファイルをダウンロードします."""
     with urllib.request.urlopen(url) as web_file, open(local_path, 'wb') as download_file:
         download_file.write(web_file.read())
 
 
 def fix_image(dst_folder, line):
+    """Qiitaのサーバーの画像ファイルから自分のリポジトリのファイルを表示するように修正する."""
     images = re.findall(r'https://qiita-image-store.+?\.(?:png|gif|jpeg|jpg)', line)
     if not images:
         return line
@@ -57,6 +71,7 @@ def fix_image(dst_folder, line):
 
 
 def fix_markdown(dst_folder, body):
+    """GitHubのマークダウンで表示できるように修正します."""
     result = ''
     lines = body.splitlines()
     code_block_flg = False
@@ -88,18 +103,17 @@ if __name__ == '__main__':
 
     user = argvs[1]
     token = argvs[2]
-    dst_folder = argvs[3]
+    dst = argvs[3]
 
-    if not os.path.exists(dst_folder):
-        os.mkdir(dst_folder)
-    if not os.path.exists(dst_folder + '/image'):
-        os.mkdir(dst_folder + '/image')
+    if not os.path.exists(dst):
+        os.mkdir(dst)
+    if not os.path.exists(dst + '/image'):
+        os.mkdir(dst + '/image')
 
     qiitaApi = qiita_api.QiitaApi(token)
 
     items = qiitaApi.query_user_items(user)
     for i in items:
-        text = fix_markdown(dst_folder, i['body'])
-        with open(dst_folder + '/' + i['title'] + '.md', 'w' , encoding='utf-8') as md_file:
+        text = fix_markdown(dst, i['body'])
+        with open(dst + '/' + i['title'] + '.md', 'w', encoding='utf-8') as md_file:
             md_file.write(text)
-

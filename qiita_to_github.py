@@ -70,7 +70,14 @@ def fix_image(dst_folder, line):
     return line
 
 
-def fix_markdown(dst_folder, body):
+def fix_mypage_link(github_url, line, dict_title):
+    """自分の記事へのURLを修正する"""
+    for url in dict_title.keys():
+        line = line.replace(url, github_url + '/' + dict_title[url] + '.md')
+    return line
+
+
+def fix_markdown(github_url, dst_folder, body, dict_title):
     """GitHubのマークダウンで表示できるように修正します."""
     result = ''
     lines = body.splitlines()
@@ -86,8 +93,11 @@ def fix_markdown(dst_folder, body):
         line = fix_titlemiss(line)
         line = fix_image(dst_folder, line)
 
-        # コードブロックの外では改行コードの後にスペースを２ついれる
+        # コードブロックの外では以下の処理を行う
+        # ・自分の記事へのリンクの修正
+        # ・改行コードの後にスペースを２ついれる
         if not code_block_flg:
+            line = fix_mypage_link(github_url, line, dict_title)
             line = fix_newline(line)
 
         result += line
@@ -97,13 +107,14 @@ def fix_markdown(dst_folder, body):
 if __name__ == '__main__':
     argvs = sys.argv
     argc = len(argvs)
-    if argc != 4:
-        print("Usage #python %s [userid] [accesstoken] [保存先フォルダ]" % argvs[0])
+    if argc != 5:
+        print("Usage #python %s [userid] [accesstoken] [保存先フォルダ] [GitHubのブロブのルートURL ex.https://github.com/mima3/note/blob/master]" % argvs[0])
         exit()
 
     user = argvs[1]
     token = argvs[2]
     dst = argvs[3]
+    github_url = argvs[4]
 
     if not os.path.exists(dst):
         os.mkdir(dst)
@@ -113,7 +124,11 @@ if __name__ == '__main__':
     qiitaApi = qiita_api.QiitaApi(token)
 
     items = qiitaApi.query_user_items(user)
+    dict_title = {}
     for i in items:
-        text = fix_markdown(dst, i['body'])
+        dict_title[i['url']] = i['title']
+
+    for i in items:
+        text = fix_markdown(github_url, dst, i['body'], dict_title)
         with open(dst + '/' + i['title'] + '.md', 'w', encoding='utf-8') as md_file:
             md_file.write(text)

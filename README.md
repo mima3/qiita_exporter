@@ -29,7 +29,7 @@ https://github.com/mima3/qiita_exporter
 (2)下記の形式でスクリプトを実行する。  
   
 ```
-python qiita_to_github.py [userid] [accesstoken] [保存先フォルダ]
+python qiita_to_github.py [userid] [accesstoken] [保存先フォルダ] [GitHubのブロブのルートURL ex.https://github.com/mima3/note/blob/master]  
 ```  
   
 (3)保存先フォルダをGitHubに登録します。  
@@ -39,6 +39,7 @@ python qiita_to_github.py [userid] [accesstoken] [保存先フォルダ]
 ・コードブロック以外の行にて、改行コードの前にスペース2ついれて改行を行います。  
 ・「#タイトル」という記述があったら「# タイトル」に直します。  
 ・コードブロックのタイトル（例：「```python:test.py」）が表示されないので対応します。  
+・自分の記事へのURLを修正する  
   
   
 # 課題  

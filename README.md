@@ -17,7 +17,7 @@ http://needtec.sakura.ne.jp/wod07672/category/%e6%8a%80%e8%a1%93%e6%96%87%e7%ab%
 Python 3.7.4  
 Windows10  
 
-WordPress 5.3.2
+WordPress 5.3.2  
 ・[WP Githuber MD – WordPress Markdown Editor](https://wordpress.org/plugins/wp-githuber-md/)  
 ・[Application Passwords](https://ja.wordpress.org/plugins/application-passwords/)  
 

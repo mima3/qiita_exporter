@@ -10,7 +10,7 @@ https://qiita.com/mima_ita
 https://github.com/mima3/note  
 
 **WordPressへの移行のサンプル** 
-http://needtec.sakura.ne.jp/wod07672/category/%e6%8a%80%e8%a1%93%e6%96%87%e7%ab%a0/
+http://needtec.sakura.ne.jp/wod07672/category/qiita%e3%81%8b%e3%82%89%e3%81%ae%e7%a7%bb%e8%a1%8c/
 
   
 # 動作環境  

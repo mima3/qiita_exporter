@@ -120,3 +120,34 @@ class QiitaApi:
             raise Exception(res.status_code, res.reason)
         items = json.loads(res.text)
         return res.headers["Total-Count"], items
+
+
+    def query_stock(self, user_id):
+        """指定のユーザがストックした記事をすべて取得する
+
+        Args:
+            user_id (string): ユーザのID
+
+        Returns:
+            array: 記事の一覧
+
+        """
+        return self._query_all_page(self._query_stock_page, user_id)
+
+    def _query_stock_page(self, user_id, per_page, page):
+        headers = {
+            "Content-Type": "application/json",
+            "charset": "UTF-8",
+            "Authorization": "Bearer " + self._access_token
+        }
+        res = requests.get(
+            "{baseUrl}/api/v2/users/{user_id}/stocks?per_page={per_page}&page={page}".format(
+                baseUrl=self.QIITA_API_URL,
+                per_page=per_page,
+                page=page,
+                user_id=user_id),
+            headers=headers)
+        if res.status_code != 200:
+            raise Exception(res.status_code, res.reason)
+        items = json.loads(res.text)
+        return res.headers["Total-Count"], items
